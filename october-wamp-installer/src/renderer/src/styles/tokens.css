@@ -1,0 +1,30 @@
+@import '@phosphor-icons/web/regular';
+
+:root {
+  color-scheme: dark;
+  --color-page: #3c1518;
+  --color-ink: #f2f3ae;
+  --color-ink-muted: rgb(242 243 174 / 72%);
+  --color-ink-subtle: rgb(242 243 174 / 58%);
+  --color-action: #a44200;
+  --color-action-pressed: #842c05;
+  --color-emphasis: #d58936;
+  --color-inset: #69140e;
+  --color-rule: #472928;
+  --color-failure: #ec7b57;
+  --font-ui: 'Red Hat Text', 'Segoe UI', sans-serif;
+  --font-code: 'Source Code Pro', Consolas, monospace;
+  --radius-panel: 14px;
+  --radius-control: 10px;
+  --radius-segment: 7px;
+  --shadow-inset-field: inset 0 -2px 3px rgb(0 0 0 / 20%);
+  --shadow-panel: 0 3px 10px rgb(15 5 6 / 16%), inset 0 0 0 1px var(--color-rule);
+  --shadow-window: 0 7px 22px rgb(16 5 6 / 24%), inset 0 0 0 1px var(--color-rule);
+  font-family: var(--font-ui);
+  color: var(--color-ink);
+  background: var(--color-page);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

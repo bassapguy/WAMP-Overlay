@@ -1,0 +1,70 @@
+{
+  "name": "wamp-local-site-installer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Windows desktop utility for local WampServer sites",
+  "author": "Local development utility",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "build": "npm run typecheck && electron-vite build",
+    "preview": "electron-vite preview",
+    "test": "vitest run",
+    "dist:win": "npm run build && electron-builder --win nsis",
+    "publish:win": "npm run build && node scripts/prepare-github-release.cjs && electron-builder --win nsis --publish always"
+  },
+  "dependencies": {
+    "@fontsource/red-hat-text": "^5.3.0",
+    "@fontsource/source-code-pro": "^5.3.0",
+    "@phosphor-icons/web": "^2.1.2",
+    "electron-updater": "^6.8.9",
+    "mysql2": "^3.24.5",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^5.0.0",
+    "typescript": "~6.0.3",
+    "vite": "^7.3.6",
+    "vitest": "^5.0.3"
+  },
+  "build": {
+    "appId": "com.localtools.wampsiteinstaller",
+    "productName": "Wamp Local Site Installer",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "scripts/elevated-mutations.ps1",
+        "to": "scripts/elevated-mutations.ps1"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "${productName}-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

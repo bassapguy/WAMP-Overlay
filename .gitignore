@@ -1,0 +1,20 @@
+# JavaScript dependencies and build artifacts
+node_modules/
+**/node_modules/
+**/dist/
+**/dist-electron/
+**/release/
+**/.vite/
+
+# Runtime logs and secrets
+*.log
+.env
+.env.*
+!.env.example
+
+# Local IDE/design workspace data
+.kombai/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
