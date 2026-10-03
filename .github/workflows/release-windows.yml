@@ -4,16 +4,29 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing version tag to build and publish, such as v1.0.0
+        required: true
+        default: v1.0.0
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: windows-release-${{ inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
 
 jobs:
   build-and-publish:
     runs-on: windows-latest
     steps:
-      - name: Check out source
+      - name: Check out release source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,7 +43,7 @@ jobs:
         working-directory: october-wamp-installer
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME: ${{ inputs.release_tag || github.ref_name }}
         run: node scripts/prepare-github-release.cjs
 
       - name: Run tests
@@ -41,9 +54,59 @@ jobs:
         working-directory: october-wamp-installer
         run: npm run build
 
+      - name: Create or reuse GitHub release
+        uses: actions/github-script@v7
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const tagName = process.env.RELEASE_TAG;
+
+            async function findRelease() {
+              try {
+                const { data } = await github.rest.repos.getReleaseByTag({ owner, repo, tag: tagName });
+                return data;
+              } catch (error) {
+                if (error.status === 404) return null;
+                throw error;
+              }
+            }
+
+            let release = await findRelease();
+            if (release?.draft) {
+              throw new Error(`Release ${tagName} exists as a draft; publish or remove the draft before continuing.`);
+            }
+
+            if (!release) {
+              try {
+                const { data } = await github.rest.repos.createRelease({
+                  owner,
+                  repo,
+                  tag_name: tagName,
+                  name: tagName,
+                  draft: false,
+                  prerelease: false,
+                  generate_release_notes: false,
+                  body: `Automated Windows release for ${tagName}.`
+                });
+                release = data;
+                core.info(`Created GitHub release ${tagName}.`);
+              } catch (error) {
+                if (error.status !== 422) throw error;
+                release = await findRelease();
+                if (!release) throw error;
+                core.info(`Release ${tagName} was created concurrently; reusing it.`);
+              }
+            } else {
+              core.info(`Reusing existing GitHub release ${tagName}.`);
+            }
+
       - name: Publish NSIS installer and updater metadata
         working-directory: october-wamp-installer
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          EP_GH_IGNORE_TIME: 'true'
         run: npx electron-builder --win nsis --publish always

@@ -40,7 +40,7 @@ npm run dev
 
 ## GitHub Releases and automatic updates
 
-The public source repository is [bassapguy/WAMP-Overlay](https://github.com/bassapguy/WAMP-Overlay). Pushing a version tag matching `package.json` (for example, `v1.0.0`) triggers [the Windows release workflow](../.github/workflows/release-windows.yml). It installs dependencies, runs the tests and production build, then publishes the NSIS installer and update metadata to GitHub Releases. The workflow configures the updater feed for this repository and fails if the tag and app version differ.
+The public source repository is [bassapguy/WAMP-Overlay](https://github.com/bassapguy/WAMP-Overlay). Pushing a version tag matching `package.json` (for example, `v1.0.0`) triggers [the Windows release workflow](../.github/workflows/release-windows.yml). It installs dependencies, runs tests and the production build, creates or reuses the matching GitHub Release, then publishes the NSIS installer and updater metadata. The workflow configures the updater feed for this repository and fails if the tag and app version differ. Same-tag runs are serialized; an existing matching release is reused, including when the first attempt only uploaded some assets.
 
 For a subsequent release, update the version in `package.json`, commit the change, then push the matching tag:
 
@@ -51,7 +51,9 @@ git tag v1.0.1
 git push origin v1.0.1
 ```
 
-In the installed app, use **Check for updates**, then download and restart when a release is available. GitHub Actions uses its repository-scoped `GITHUB_TOKEN`; no access token should be committed or embedded in the app.
+To retry a partial release, open **Actions → Windows release → Run workflow**, leave the branch set to `main`, and enter the existing tag such as `v1.0.0`. The workflow checks out that tag, validates its version, and replaces any already-uploaded assets as needed. GitHub Actions uses its repository-scoped `GITHUB_TOKEN`; no access token should be committed or embedded in the app.
+
+In the installed app, use **Check for updates**, then download and restart when a release is available.
 
 ## Dashboard and platform workflow
 

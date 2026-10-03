@@ -8,6 +8,8 @@ See [`october-wamp-installer/README.md`](october-wamp-installer/README.md) for W
 
 ## Windows releases
 
-Push a version tag matching `october-wamp-installer/package.json` (for example, `v1.0.0`) to trigger the GitHub Actions workflow. It runs tests, builds the app, and publishes the Windows NSIS installer and updater metadata to GitHub Releases.
+Push a version tag matching `october-wamp-installer/package.json` (for example, `v1.0.0`) to trigger the GitHub Actions workflow. It runs tests and the production build, creates or reuses the matching GitHub Release, and publishes the Windows NSIS installer and updater metadata.
+
+To retry a partial release without moving the tag, open **Actions → Windows release → Run workflow**, select `main`, and enter the existing version tag (for example, `v1.0.0`). Same-tag runs are serialized, and already-uploaded assets are replaced by the publisher when needed.
 
 The app, WampServer sites, databases, and Apache configuration remain local to each computer. The initial installer is unsigned; see the app guide for the SmartScreen note.
