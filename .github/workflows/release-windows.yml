@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: Existing version tag to build and publish, such as v1.0.0
+        description: Existing version tag to build and publish, such as v1.0.1
         required: true
-        default: v1.0.0
+        default: v1.0.1
         type: string
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
           $tag = ([string]$tag).Trim()
 
           if ([string]::IsNullOrWhiteSpace($tag) -or $tag -notmatch '^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$') {
-            throw "Release tag must be a version tag such as v1.0.0; received '$tag'. For manual runs, enter the release_tag input."
+            throw "Release tag must use semantic version format, for example v1.2.3; received '$tag'. For manual runs, enter the release_tag input."
           }
 
           "release_tag=$tag" >> $env:GITHUB_OUTPUT

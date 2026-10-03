@@ -12,7 +12,7 @@ const manifestPath = path.join(__dirname, '..', 'package.json');
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 const refName = process.env.GITHUB_REF_NAME?.trim() || `v${manifest.version}`;
 if (!/^v\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/.test(refName)) {
-  console.error(`GITHUB_REF_NAME must be a version tag such as v${manifest.version}; for manual workflow runs, provide the release_tag input.`);
+  console.error(`GITHUB_REF_NAME must use semantic version format, for example v1.2.3; for manual workflow runs, provide the release_tag input.`);
   process.exit(1);
 }
 const versionTag = refName.slice(1);

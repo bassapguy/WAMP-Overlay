@@ -1,7 +1,7 @@
 {
   "name": "wamp-local-site-installer",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Windows desktop utility for local WampServer sites",
   "author": "Local development utility",
   "type": "module",
